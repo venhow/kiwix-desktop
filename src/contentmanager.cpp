@@ -345,6 +345,12 @@ void ContentManager::setCurrentCategoryFilter(QString category)
     emit(filterParamsChanged());
 }
 
+void ContentManager::setCurrentContentTypeFilter(QString contentTypeFilter)
+{
+    m_contentTypeFilter = contentTypeFilter;
+    emit(filterParamsChanged());
+}
+
 void ContentManager::updateLibrary() {
     if (m_local) {
         emit(pendingRequest(false));
@@ -378,7 +384,6 @@ QStringList ContentManager::getBookIds()
     std::vector<std::string> tags;
     if (m_categoryFilter != "all" && m_categoryFilter != "other") {
         tags.push_back("_category:"+m_categoryFilter.toStdString());
-        filter.acceptTags(tags);
     }
     if (m_categoryFilter == "other") {
         for (auto& category: S_CATEGORIES) {
@@ -388,6 +393,17 @@ QStringList ContentManager::getBookIds()
         }
         filter.rejectTags(tags);
     }
+
+    if (m_contentTypeFilter != "all") {
+        auto filters = m_contentTypeFilter.split(";", QString::SkipEmptyParts);
+        for (auto &contentTypeFilter : filters) {
+            auto f = contentTypeFilter.split(":");
+            if (f[1] != "no-filter")
+                tags.push_back("_" + contentTypeFilter.toStdString());
+        }
+    }
+
+    filter.acceptTags(tags);
     filter.query(m_searchQuery.toStdString());
 
     if (m_local) {

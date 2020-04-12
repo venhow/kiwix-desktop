@@ -20,6 +20,9 @@ public:
 
     void setContentManager(ContentManager* contentManager);
 
+private slots:
+    void onContentTypeFilterChanged(QListWidgetItem *item);
+
 private:
     Ui::contentmanagerside *mp_ui;
     ContentManager* mp_contentManager;
@@ -27,6 +30,9 @@ private:
     QListWidget* mp_languageSelector;
     QCheckBox* mp_categoryButton;
     QListWidget* mp_categorySelector;
+    QCheckBox* mp_contentTypeButton;
+    QListWidget* mp_contentTypeSelector;
+    QMap<QString, QString> m_contentTypeStatesTurnover;
 };
 
 #endif // CONTENTMANAGERSIDE_H

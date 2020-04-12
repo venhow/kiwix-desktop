@@ -9,6 +9,7 @@
 
 extern std::vector<QLocale::Language> S_LANGUAGES;
 extern std::vector<std::pair<QString, QString>> S_CATEGORIES;
+extern std::vector<std::pair<QString, QString>> S_CONTENTTYPE;
 
 void initStaticContent();
 

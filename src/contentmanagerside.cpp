@@ -28,15 +28,29 @@ ContentManagerSide::ContentManagerSide(QWidget *parent) :
     mp_ui->localFileButton ->setText(gt("local-files"));
     mp_ui->languageButton->setText(gt("browse-by-language"));
     mp_ui->categoryButton->setText(gt("browse-by-category"));
+    mp_ui->contentTypeButton->setText(gt("content-type"));
+
     mp_languageButton = mp_ui->languageButton;
     mp_languageSelector = mp_ui->languageSelector;
     connect(mp_languageButton, &QCheckBox::toggled, this, [=](bool checked) { mp_languageSelector->setHidden(!checked); });
     mp_languageSelector->setHidden(true);
+
     mp_categoryButton = mp_ui->categoryButton;
     mp_categorySelector = mp_ui->categorySelector;
     connect(mp_categoryButton, &QCheckBox::toggled, this, [=](bool checked) { mp_categorySelector->setHidden(!checked); });
     mp_categorySelector->setHidden(true);
-    mp_ui->contentTypeButton->hide();
+
+    mp_contentTypeButton = mp_ui->contentTypeButton;
+    mp_contentTypeSelector = mp_ui->contentTypeSelector;
+
+    connect(mp_contentTypeButton, &QCheckBox::toggled, this, [=](bool checked) { mp_contentTypeSelector->setHidden(!checked); });
+    mp_contentTypeSelector->setHidden(true);
+    mp_contentTypeSelector->setSelectionMode(QAbstractItemView::MultiSelection);
+    mp_contentTypeSelector->setTextElideMode(Qt::ElideNone);
+
+    m_contentTypeStatesTurnover["no-filter"] = "yes";
+    m_contentTypeStatesTurnover["yes"] = "no";
+    m_contentTypeStatesTurnover["no"] = "no-filter";
 
     for(auto lang: S_LANGUAGES)
     {
@@ -74,11 +88,46 @@ ContentManagerSide::ContentManagerSide(QWidget *parent) :
         }
     }
 
+    for (auto contentType: S_CONTENTTYPE)
+    {
+        auto item = new QListWidgetItem(contentType.second);
+        item->setData(Qt::UserRole, contentType.first);
+        mp_contentTypeSelector->addItem(item);
+        item->setFlags(Qt::NoItemFlags);
+        if (!(contentType.first == "all")) {
+            item->setText(item->text() + " : " + gt("no-filter"));
+            item->setData(Qt::UserRole, contentType.first + ":no-filter");
+        }
+    }
 }
 
 ContentManagerSide::~ContentManagerSide()
 {
     delete mp_ui;
+}
+
+void ContentManagerSide::onContentTypeFilterChanged(QListWidgetItem *item)
+{
+    auto currentFilterName = item->data(Qt::UserRole).toString().split(":")[0];
+    if (currentFilterName == "all") {
+        for (int i = 1; i < mp_contentTypeSelector->count(); i++) {
+            auto filter = mp_contentTypeSelector->item(i);
+            auto filterName = filter->data(Qt::UserRole).toString().split(":")[0];
+            filter->setText(gt(filterName) + " : " + gt("no-filter"));
+            filter->setData(Qt::UserRole, filterName + ":no-filter");
+        }
+        mp_contentManager->setCurrentContentTypeFilter("all");
+        return;
+    }
+    auto currentFilterState = item->data(Qt::UserRole).toString().split(":")[1];
+    item->setText(gt(currentFilterName) + " : " + gt(m_contentTypeStatesTurnover[currentFilterState]));
+    item->setData(Qt::UserRole, currentFilterName + ":" + m_contentTypeStatesTurnover[currentFilterState]);
+    QString contentTypeFilters;
+    for (int i = 1; i < mp_contentTypeSelector->count(); i++) {
+        auto filter = mp_contentTypeSelector->item(i);
+        contentTypeFilters.append(filter->data(Qt::UserRole).toString() + ";");
+    }
+    mp_contentManager->setCurrentContentTypeFilter(contentTypeFilters);
 }
 
 
@@ -105,4 +154,6 @@ void ContentManagerSide::setContentManager(ContentManager *contentManager)
                 auto category = item->data(Qt::UserRole).toString();
                 mp_contentManager->setCurrentCategoryFilter(category);
     });
+    connect(mp_contentTypeSelector, &QListWidget::itemClicked,
+            this, &ContentManagerSide::onContentTypeFilterChanged);
 }

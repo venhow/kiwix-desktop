@@ -25,6 +25,7 @@ public:
     QStringList getDownloadIds();
     void setCurrentLanguage(QString language);
     void setCurrentCategoryFilter(QString category);
+    void setCurrentContentTypeFilter(QString contentTypeFilter);
 
 private:
     Library* mp_library;
@@ -36,6 +37,7 @@ private:
     QString m_currentLanguage;
     QString m_searchQuery;
     QString m_categoryFilter = "all";
+    QString m_contentTypeFilter = "all";
     kiwix::supportedListSortBy m_sortBy = kiwix::UNSORTED;
     bool m_sortOrderAsc = true;
 

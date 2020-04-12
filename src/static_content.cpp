@@ -5,6 +5,7 @@
 
 std::vector<QLocale::Language> S_LANGUAGES;
 std::vector<std::pair<QString, QString>> S_CATEGORIES;
+std::vector<std::pair<QString, QString>> S_CONTENTTYPE;
 
 void initStaticContent() {
 #define PUSH(key) S_CATEGORIES.push_back(std::make_pair(QString::fromStdString(key), gt(key)))
@@ -25,6 +26,14 @@ void initStaticContent() {
   PUSH("wikiversity");
   PUSH("wikivoyage");
   PUSH("wiktionary");
+#undef PUSH
+
+#define PUSH(key) S_CONTENTTYPE.push_back(std::make_pair(QString::fromStdString(key), gt(key)))
+  PUSH("all");
+  PUSH("details");
+  PUSH("pictures");
+  PUSH("videos");
+  PUSH("ftindex");
 #undef PUSH
 
 #define PUSH(value) S_LANGUAGES.push_back(value)

@@ -103,5 +103,12 @@
     "wikispecies":"Wikispecies",
     "wikiversity":"Wikiversity",
     "wikivoyage":"Wikivoyage",
-    "wiktionary":"Wiktionary"
+    "wiktionary":"Wiktionary",
+    "pictures":"Pictures",
+    "videos":"Videos",
+    "ftindex":"Fulltext index",
+    "details":"Full article",
+    "yes":"yes",
+    "no":"no",
+    "no-filter":"no filter"
 }

@@ -239,6 +239,7 @@ QTabBar::tab:last QToolButton::hover {
 
 #categorySelector QScrollBar,
 #languageSelector QScrollBar,
+#contentTypeSelector QScrollBar,
 #readinglistbar QScrollBar {
     width: 5px;
     border: none;
@@ -247,15 +248,21 @@ QTabBar::tab:last QToolButton::hover {
 
 #categorySelector QScrollBar::handle,
 #languageSelector QScrollBar::handle,
+#contentTypeSelector QScrollBar::handle,
 #readinglistbar QScrollBar {
     background-color: grey;
 }
 
 #categorySelector::item:selected,
+#contentTypeSelector::item::selected,
 #languageSelector::item:selected {
     background-color: white;
     color: black;
     outline: none;
+}
+
+#contentTypeSelector::item:disabled {
+    color: black;
 }
 
 #readinglistbar QLabel {
